@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+using Cinemachine;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -81,6 +83,7 @@ namespace StarterAssets
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
+
         // player
         private float _speed;
         private float _animationBlend;
@@ -94,9 +97,11 @@ namespace StarterAssets
         private float _fallTimeoutDelta;
 
         // animation IDs
+        private bool isStanding = true;
         private int _animIDSpeed;
         private int _animIDGrounded;
         private int _animIDJump;
+        private int _animIDCrouch;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
 
@@ -107,7 +112,6 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
-
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
@@ -146,8 +150,8 @@ namespace StarterAssets
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
-
             AssignAnimationIDs();
+
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
@@ -157,10 +161,18 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
+            if (isStanding)
+            {
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
+            }
+            else
+            {
+                Waiting();
+            }
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
+
         }
 
         private void LateUpdate()
@@ -173,6 +185,7 @@ namespace StarterAssets
             _animIDSpeed = Animator.StringToHash("Speed");
             _animIDGrounded = Animator.StringToHash("Grounded");
             _animIDJump = Animator.StringToHash("Jump");
+            _animIDCrouch = Animator.StringToHash("Crouch");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
         }
@@ -212,8 +225,27 @@ namespace StarterAssets
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
         }
+        private void OnCrouch(InputValue valor)
+        {
+            _animator.SetBool(_animIDCrouch, true);
+        }
 
-        private void Move()
+        private void Waiting()
+        {
+            if (_hasAnimator)
+            {
+                if (_input.jump)
+                {
+
+                    _animator.SetBool(_animIDCrouch, false);
+                    _input.jump = false;
+                    _input.crouch= false;
+                    isStanding = true;
+                }
+            }
+
+        }
+            private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed;
@@ -224,6 +256,12 @@ namespace StarterAssets
 			else{
 			targetSpeed=MoveSpeed;
 			}
+            if (_input.crouch){
+               _animator.SetBool(_animIDCrouch, true);
+                isStanding = false;
+            }
+
+
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
@@ -298,6 +336,7 @@ namespace StarterAssets
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDJump, false);
+                    _animator.SetBool(_animIDCrouch, false);
                     _animator.SetBool(_animIDFreeFall, false);
                 }
 
@@ -319,6 +358,9 @@ namespace StarterAssets
                         _animator.SetBool(_animIDJump, true);
                     }
                 }
+
+
+
 
                 // jump timeout
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -355,6 +397,7 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
+
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
