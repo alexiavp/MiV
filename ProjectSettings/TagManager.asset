@@ -7,6 +7,8 @@ TagManager:
   - CinemachineTarget
   - nombre1
   - PickableObject
+  - LongPickableObject
+  - ShortPickableObject
   layers:
   - Default
   - TransparentFX
