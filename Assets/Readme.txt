@@ -1,3 +1,4 @@
 Este proyecto ha estado desarrollado por alumnos de la asignatura Modelización y Visualización de la URV. Los miembros del grupo son Estela Álvarez Pasjak, Alberto Flores Pastor, Jorge Pérez Álvarez, Ismael Prieto Sánchez y Alexia Vidal Pons.
 
-Se trata de una representación de un robot que aparece en la época Media en medio de una pequeña aldea y tiene que encontrar el bosque mágico para poder volver.
+Se trata de una representación de un robot que aparece en la época Media en medio de una pequeña aldea y tiene que encontrar el bosque mágico para poder volver. Para completar la aventura tienes que elegir tu arma, una hacha o un rastrillo, para ello situate al lado y dale clic a la letra E de tu teclado. El robot es capaz de hacer varios movimiento com agacharse dandole clic a la barra espaciadora o agachándose con la tecla ctrl.
+Al iniciar el juego puedes introducir tu nombre y te aparecerá a la derecha de la pantalla, en la parte inferior podrás observar tu nivel de vida (stamina) durante la evolución del juego
