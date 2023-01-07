@@ -7,7 +7,8 @@ using UnityEngine;
 public class ObjectPickup : MonoBehaviour
 {
     public GameObject item; 
-    public GameObject playerRightHand; 
+    public GameObject playerRightHand;
+    public GameObject dropOffPoint;
     //public Transform guide; 
     bool carrying;
 
@@ -43,17 +44,22 @@ public class ObjectPickup : MonoBehaviour
         //item.transform.position = guide.transform.position;
         //item.transform.rotation = guide.transform.rotation;
         //item.transform.parent = tempParent.transform;
-        item.transform.SetParent(playerRightHand.transform);
-        item.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-        item.transform.localRotation = Quaternion.Euler(-33.487f, -183.588f,-117.277f);
-        item.transform.localScale = new Vector3(1f,1f,1f);
+
+        if (item != null)
+        {
+            item.transform.SetParent(playerRightHand.transform);
+            item.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+            item.transform.localRotation = Quaternion.Euler(-33.487f, -183.588f,-117.277f);
+            item.transform.localScale = new Vector3(1f,1f,1f);
+        }
+        
     }
     void drop()
     {
-        //item.GetComponent<Rigidbody>().useGravity = true;
-        item.GetComponent<Rigidbody>().isKinematic = false;
         item.transform.parent = null;
-        //item.transform.position = guide.transform.position;
+        item.transform.localPosition = dropOffPoint.transform.position;
+        item.transform.localRotation = Quaternion.Euler(4.839f, -74.655f,-90.886f);
+        
     }
 
     public void OnTriggerEnter(Collider other){
