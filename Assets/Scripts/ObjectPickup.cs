@@ -21,7 +21,7 @@ public class ObjectPickup : MonoBehaviour
     {
         if (carrying == false)
         {
-            if (Input.GetKeyDown(KeyCode.E)) 
+            if (Input.GetKeyDown(KeyCode.E) && item != null) 
             {
                 pickup();
                 carrying = true;
@@ -38,17 +38,18 @@ public class ObjectPickup : MonoBehaviour
     }
     void pickup()
     {
-        item.GetComponent<Rigidbody>().useGravity = false;
-        item.GetComponent<Rigidbody>().isKinematic = true;
+       
 
         if (item != null)
         {
-            item.transform.SetParent(playerRightHand.transform);
+            item.GetComponent<Rigidbody>().useGravity = false;
+			item.GetComponent<Rigidbody>().isKinematic = true;
+			item.transform.SetParent(playerRightHand.transform);
             item.GetComponent<Rigidbody>().MovePosition(playerRightHand.transform.position);
             if(item.gameObject.CompareTag("ShortPickableObject"))
             {
-                item.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-                item.transform.localRotation = Quaternion.Euler(-33.487f, -183.588f,-117.277f);
+                item.transform.localPosition = new Vector3(0.598f, -0.107f, 0.106f);
+                item.transform.localRotation = Quaternion.Euler(-65.706f, -200.146f,-77.145f);
             } else if(item.gameObject.CompareTag("LongPickableObject"))
             {
                 item.transform.localPosition = new Vector3(0.7824f, -0.1125f, 0.0809f);
@@ -68,9 +69,12 @@ public class ObjectPickup : MonoBehaviour
     }
 
     public void OnTriggerEnter(Collider other){
-        if(other.CompareTag("LongPickableObject")||other.CompareTag("ShortPickableObject")){
-            item = other.gameObject;
-        }
+        if(item == null){
+				if(other.CompareTag("LongPickableObject")||other.CompareTag("ShortPickableObject")){
+				item = other.gameObject;
+			}
+		}
+		
     }
     public void OnTriggerExit(Collider other){
         item = null;
